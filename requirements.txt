@@ -1,0 +1,4 @@
+mcp[cli]==1.9.4
+pydantic
+uvicorn
+starlette
