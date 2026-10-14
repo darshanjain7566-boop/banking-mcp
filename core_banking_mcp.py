@@ -4,7 +4,12 @@ import uuid
 import os
 
 # Initialize FastMCP Server
-mcp = FastMCP("Core-Banking-MCP", stateless_http=True)
+mcp = FastMCP(
+    "Core-Banking-MCP",
+    stateless_http=True,
+    host="0.0.0.0",
+    port=int(os.environ.get("PORT", 8000)),
+)
 
 # =====================================================================
 # IN-MEMORY MOCK DATABASES
@@ -181,4 +186,4 @@ async def health(request):
     })
 
 if __name__ == "__main__":
-    mcp.run(transport="streamable-http", host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
+    mcp.run(transport="streamable-http")
