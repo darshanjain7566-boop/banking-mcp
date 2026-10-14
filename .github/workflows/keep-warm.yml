@@ -1,0 +1,29 @@
+name: Keep Banking MCP Warm
+
+on:
+  schedule:
+    # Every 10 minutes (Render free tier sleeps after 15 min of inactivity)
+    - cron: "*/10 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping health endpoint (tolerates cold start)
+        run: |
+          echo "Pinging banking MCP health endpoint..."
+          # --max-time 90 gives Render time to cold-start if asleep,
+          # so the request always completes and resets the sleep timer.
+          for i in 1 2 3; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 90 \
+              https://banking-mcp-2xyq.onrender.com/health || echo "000")
+            echo "Attempt $i -> HTTP $code"
+            if [ "$code" = "200" ]; then
+              echo "Server is warm."
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "Did not get 200 after retries (ping still reset the sleep timer)."
+          exit 0
