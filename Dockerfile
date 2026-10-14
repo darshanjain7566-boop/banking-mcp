@@ -7,8 +7,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Hugging Face Spaces exposes port 7860 by default
-ENV PORT=7860
-EXPOSE 7860
+# The app reads $PORT at runtime (Render/HF inject it). Default 8000 locally.
+EXPOSE 8000
 
 CMD ["python", "core_banking_mcp.py"]
